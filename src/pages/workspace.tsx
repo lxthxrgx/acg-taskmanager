@@ -7,7 +7,7 @@ const TaskList: IWorkspace[] = [
     id: 1,
     name: "Allience Capital Group",
     description: "The workspace was created to track the status of work on the ACG CRM website",
-    image: "/images/1.jpg",
+    image: "/images/4.gif",
     users: []
   },
   {
