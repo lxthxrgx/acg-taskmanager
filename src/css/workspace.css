@@ -7,7 +7,7 @@
 }
 
 .tile {
-  background-color: #f0f0f0;
+  background-color: #e9e7e7;
   border-radius: 8px;
   width: 250px;
   height: 300px;
@@ -34,4 +34,21 @@
   border-top-right-radius: 8px;
   border-bottom-left-radius: 0px;
   border-bottom-right-radius: 0px;
+}
+
+.tile.add-new-tile:hover {
+  transform: scale(1.05);
+  background-color: #bdbdbd;
+}
+
+.tile.add-new-tile .plus-icon {
+  font-size: 48px;
+  font-weight: bold;
+  color: #333;
+}
+
+.tile.add-new-tile p {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
 }

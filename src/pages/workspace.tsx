@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { IWorkspace } from '../model/workspace';
 import "../css/workspace.css";
 
-const TaskList: IWorkspace[] = [
+const initialTaskList: IWorkspace[] = [
   {
     id: 1,
-    name: "Allience Capital Group",
-    description: "The workspace was created to track the status of work on the ACG CRM website",
+    name: "---------------------",
+    description: "--------------------------------------------------------------------------",
     image: "/images/4.gif",
     users: []
   },
@@ -20,23 +20,98 @@ const TaskList: IWorkspace[] = [
 ];
 
 function WorkspaceComponent() {
+  const [taskList, setTaskList] = useState<IWorkspace[]>(initialTaskList);
+  const [editWorkspace, setEditWorkspace] = useState<{ id: number, field: string } | null>(null);
+  const [inputValues, setInputValues] = useState<{ [key: number]: { name: string, description: string } }>({});
+
+  const handleAddNew = () => {
+    const newWorkspace: IWorkspace = {
+      id: taskList.length + 1,
+      name: `New Workspace ${taskList.length + 1}`,
+      description: "This is a new workspace.",
+      image: "/images/default.jpg",
+      users: []
+    };
+    setTaskList([newWorkspace, ...taskList]);
+  };
+
+  const handleEdit = (id: number, field: string) => {
+    setEditWorkspace({ id, field });
+  };
+
+  const handleInputChange = (id: number, field: string, value: string) => {
+    setInputValues((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        [field]: value
+      }
+    }));
+  };
+
+  const handleSave = (id: number, field: string, value: string) => {
+    setTaskList(taskList.map(workspace => {
+      if (workspace.id === id) {
+        return { ...workspace, [field]: value };
+      }
+      return workspace;
+    }));
+    setEditWorkspace(null);
+    setInputValues((prev) => ({ 
+      ...prev, 
+      [id]: { 
+        ...prev[id], 
+        [field]: value
+      }
+    }));
+  };
+
+  const handleCancel = () => {
+    setEditWorkspace(null);
+  };
+
   return (
     <div className="MyWorkspace">
-        <div className="description">
-            <h3>Wlcome to Workspace</h3>
-            </div>
-
-        <div className="tiles-container">
-            {TaskList.map((workspace) => (
-                <div key={workspace.id} className="tile">
-                <img src={workspace.image} alt={workspace.name} />
-                <h3>{workspace.name}</h3>
-                <p>{workspace.description}</p>
+      <div className="description">
+        <h3>Welcome to Workspace</h3>
       </div>
-    ))}
-  </div>
+
+      <div className="tiles-container">
+        <div className="tile add-new-tile" onClick={handleAddNew}>
+          <span className="plus-icon">+</span>
+          <p>Add New Workspace</p>
+        </div>
+
+        {taskList.map((workspace) => (
+          <div key={workspace.id} className="tile">
+            <img src={workspace.image} alt={workspace.name} />
+
+            {editWorkspace?.id === workspace.id && editWorkspace.field === 'name' ? (
+              <input
+                type="text"
+                value={inputValues[workspace.id]?.name || workspace.name}
+                onChange={(e) => handleInputChange(workspace.id, 'name', e.target.value)}
+                onBlur={() => handleSave(workspace.id, 'name', inputValues[workspace.id]?.name || workspace.name)}
+                autoFocus
+              />
+            ) : (
+              <h3 onClick={() => handleEdit(workspace.id, 'name')}>{workspace.name}</h3>
+            )}
+
+            {editWorkspace?.id === workspace.id && editWorkspace.field === 'description' ? (
+              <textarea
+                value={inputValues[workspace.id]?.description || workspace.description}
+                onChange={(e) => handleInputChange(workspace.id, 'description', e.target.value)}
+                onBlur={() => handleSave(workspace.id, 'description', inputValues[workspace.id]?.description || workspace.description)}
+                autoFocus
+              />
+            ) : (
+              <p onClick={() => handleEdit(workspace.id, 'description')}>{workspace.description}</p>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
-   
   );
 }
 
